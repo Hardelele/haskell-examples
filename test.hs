@@ -34,6 +34,19 @@ pointInCircle p c r
 					
 pointEqualCircleCenter = pointInCircle somePoint circleCenter r
 
+calcD :: [Double] -> [Double] -> [Double] -> Double -> Double
+calcD line_p1 line_p2 circ_center r = (2 * (cx + k * b + k * cy))^2 - 4 * (1 + k^2) * (cx^2 + (b - cy)^2 - r)
+									where
+									  k = calcLineK line_p1 line_p2
+									  b = calcLineB line_p1 k
+									  cx = head circ_center
+									  cy = last circ_center
+lineInCircleCoords :: Double -> Double -> Double -> [Char]								  
+lineInCircleCoords d k b
+  | d < 0  = "no"
+  | d == 0 = "yes, 1 point"
+  | d > 0  = "yes, 2 points"
+
 main = do
 	   print $ "Enter x of circle center:"
 	   input_cx <- getLine
@@ -41,11 +54,16 @@ main = do
 	   input_cy <- getLine
 	   print $ "Enter r:"
 	   input_r <- getLine
-	   print $ "Enter x of point:"
-	   input_px <- getLine
-	   print $ "Enter y of point:"
-	   input_py <- getLine
+	   print $ "Enter x1 of line:"
+	   input_lx1 <- getLine
+	   print $ "Enter y1 of line:"
+	   input_ly1 <- getLine
+	   print $ "Enter x2 of line:"
+	   input_lx2 <- getLine
+	   print $ "Enter y2 of line:"
+	   input_ly2 <- getLine
 	   let circle = makePoint (read input_cx :: Double) (read input_cy :: Double)
-	   let point = makePoint (read input_px :: Double) (read input_py :: Double)
+	   let line_point1 = makePoint (read input_lx1 :: Double) (read input_ly1 :: Double)
+	   let line_point2 = makePoint (read input_lx2 :: Double) (read input_ly2 :: Double)
 	   let radius = (read input_r :: Double)
-	   print $ pointInCircle point circle radius
+	   print $ lineInCircleCoords (calcD line_point1 line_point2 circle radius) (calcLineK line_point1 line_point2) (calcLineB line_point1 (calcLineK line_point1 line_point2))
