@@ -41,12 +41,24 @@ calcD line_p1 line_p2 circ_center r = (2 * (cx + k * b + k * cy))^2 - 4 * (1 + k
 									  b = calcLineB line_p1 k
 									  cx = head circ_center
 									  cy = last circ_center
-lineInCircleCoords :: Double -> Double -> Double -> [Char]								  
-lineInCircleCoords d k b
-  | d < 0  = "no"
-  | d == 0 = "yes, 1 point"
-  | d > 0  = "yes, 2 points"
-
+lineInCircleCoords :: Double -> Double -> Double -> [Double] -> [Double] -> [Double] -> Double -> [Char]								  
+lineInCircleCoords d k b c p1 p2 r
+  | (lx1 == lx2) && ((lx1 == (cx + r)) || (lx1 == (cx - r))) = show lx1 ++ " " ++ show cy
+  | d < 0  = "no intersections"
+  | d == 0 = show xd0 ++ " " ++ show yd0
+  | d > 0  = show x1 ++ " " ++ show y1 ++ " " ++ show x2 ++ " " ++ show y2
+  where
+    cx = head c
+    cy = last c
+    lx1 = head p1
+    lx2 = head p2
+    xd0 = (cx + k * b + k * cy) / (1 + k^2)
+    yd0 = k * xd0 + b
+    x1 = (2 * (cx + k * b + k * cy) + d)  / (2 *(1 + k^2))
+    x2 = k * x1 + b
+    y1 = (2 * (cx + k * b + k * cy) - d)  / (2 *(1 + k^2))
+    y2 = k * x2 + b
+  
 main = do
 	   print $ "Enter x of circle center:"
 	   input_cx <- getLine
@@ -66,4 +78,4 @@ main = do
 	   let line_point1 = makePoint (read input_lx1 :: Double) (read input_ly1 :: Double)
 	   let line_point2 = makePoint (read input_lx2 :: Double) (read input_ly2 :: Double)
 	   let radius = (read input_r :: Double)
-	   print $ lineInCircleCoords (calcD line_point1 line_point2 circle radius) (calcLineK line_point1 line_point2) (calcLineB line_point1 (calcLineK line_point1 line_point2))
+	   print $ lineInCircleCoords (calcD line_point1 line_point2 circle radius) (calcLineK line_point1 line_point2) (calcLineB line_point1 (calcLineK line_point1 line_point2)) circle line_point1 line_point2 radius
